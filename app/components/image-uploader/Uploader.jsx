@@ -1,63 +1,48 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 import Head from "next/head";
 
-export default function Uploader() {
+export default function Uploader({ setImage }) {
   const [imageSrc, setImageSrc] = useState();
-  const [uploadData, setUploadData] = useState();
 
   /**
    * handleOnChange
    * @description Triggers when the file input changes (ex: when a file is selected)
    */
 
-  function handleOnChange(changeEvent) {
+  async function handleOnChange(changeEvent) {
     const reader = new FileReader();
-    reader.onload = function (onLoadEvent) {
+    reader.onload = async function (onLoadEvent) {
       setImageSrc(onLoadEvent.target.result);
-      setUploadData(undefined);
+
+      const formData = new FormData();
+      formData.append("file", changeEvent.target.files[0]);
+      formData.append("upload_preset", "hassan-uploads");
+
+      try {
+        const response = await fetch(
+          `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        const data = await response.json();
+        setImageSrc(data.secure_url);
+        setImage(data.secure_url);
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
     };
 
     reader.readAsDataURL(changeEvent.target.files[0]);
   }
 
-  /**
-   * handleOnSubmit
-   * @description Triggers when the main form is submitted
-   */
-
-  async function handleOnSubmit(event) {
-    event.preventDefault();
-
-    const form = event.currentTarget;
-    const fileInput = Array.from(form.elements).find(
-      ({ name }) => name === "file"
-    );
-
-    const formData = new FormData();
-
-    for (const file of fileInput.files) {
-      formData.append("file", file);
-    }
-
-    formData.append("upload_preset", "hassan-uploads");
-
-    const data = await fetch(
-      `https://api.cloudinary.com/v1_1/dnxnngsfp/image/upload`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    ).then((r) => r.json());
-
-    setImageSrc(data.secure_url);
-    setUploadData(data);
-  }
-
   return (
-    <div className="flex items-center justify-center w-full">
+    <div className="mt-4">
       <label
-        for="dropzone-file"
+        htmlFor="dropzone-file"
         className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
       >
         <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -81,7 +66,7 @@ export default function Uploader() {
             drop
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            SVG, PNG, JPG or GIF (MAX. 800x400px)
+            SVG, PNG, JPG, or GIF (MAX. 800x400px)
           </p>
         </div>
         <Head>
@@ -92,12 +77,7 @@ export default function Uploader() {
 
         <p className="">Upload your image to Cloudinary!</p>
 
-        <form
-          className=""
-          method="post"
-          onChange={handleOnChange}
-          onSubmit={handleOnSubmit}
-        >
+        <form className="inline-flex border rounded-md border-gray-100 dark:border-gray-600 w-24 max-h-24 p-2" method="post" onChange={handleOnChange}>
           <p>
             <input
               id="dropzone-file"
@@ -106,20 +86,13 @@ export default function Uploader() {
               className="hidden"
             />
           </p>
-
-          <img src={imageSrc} />
-
-          {imageSrc && !uploadData && (
-            <p>
-              <button>Upload Files</button>
-            </p>
-          )}
-
-          {uploadData && (
-            <code>
-              <pre>{JSON.stringify(uploadData, null, 2)}</pre>
-            </code>
-          )}
+          <div>
+          <img
+          className=""
+            src={imageSrc}
+            
+          />
+</div>
         </form>
       </label>
     </div>
