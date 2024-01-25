@@ -19,7 +19,7 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         {children}
         <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js" async></script>
-        <script src="/Helper.js" async></script>
+        {/* <script src="/Helper.js" async></script> */}
       </body>
     </html>
   );
