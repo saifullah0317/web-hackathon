@@ -31,12 +31,8 @@ export default function Writepost({ loggedUser }) {
     };
 
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/socialpost`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        console.log(result);
-        // Close the modal after successful post
-        setIsModalOpen(false);
-      })
+      .then((response) => response.text())
+      .then((result) => console.log(response.json()))
       .catch((error) => console.log("error", error));
   }
 
