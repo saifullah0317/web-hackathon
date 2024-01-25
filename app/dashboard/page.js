@@ -16,7 +16,7 @@ export default function Page() {
       credentials: "include",
     };
 
-    fetch("http://localhost:8000/auth", requestOptions)
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth`, requestOptions)
       .then(async (response) => {
         const userData = await response.json();
         setUser(userData);

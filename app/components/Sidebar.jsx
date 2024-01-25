@@ -12,12 +12,12 @@ export default function Sidebar({loggedUser}) {
           redirect: 'follow'
         };
         
-        fetch("http://localhost:8000/user/all", requestOptions)
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/all`, requestOptions)
           .then(async (response) => {
             const usersData=await response.json();
             setUsers(usersData);
           })
-          .catch(error => alert(JSON.stringify(error)));
+          .catch(error => console.log("Error: ",error));
     },[setUsers]);
   return (
     <div>

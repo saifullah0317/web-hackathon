@@ -36,7 +36,7 @@ export default function Login() {
           credentials: "include",
         };
     
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}auth/login`, requestOptions)
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`, requestOptions)
           .then(async (response) => {
             const data = await response.json();
             if(data.token){

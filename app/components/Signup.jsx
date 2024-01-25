@@ -50,7 +50,7 @@ export default function Signup() {
         credentials: "include",
       };
 
-      fetch("http://localhost:8000/auth/signup", requestOptions)
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/signup`, requestOptions)
         .then(async (response) => {
           const data = await response.json();
           if (data.token) {
