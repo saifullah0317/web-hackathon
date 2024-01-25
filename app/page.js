@@ -10,9 +10,7 @@ export default function Home() {
   console.log("env: ",process.env.NEXT_APP_CLOUD_NAME);
   return (
     <div>
-      {/* <Navbar /> */}
       {create?(<Signup/>):(<Login/>)}
-
     </div>
   );
 }
