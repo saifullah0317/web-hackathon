@@ -1,6 +1,33 @@
+"use client";
 import React from "react";
 import Uploader from "./image-uploader/Uploader";
+import { useState } from "react";
 export default function Writepost({ loggedUser }) {
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  function publishPost(image) {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      title,
+      content,
+      image,
+    });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+      credentials:'include'
+    };
+
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/socialpost`, requestOptions)
+      .then((response) => response.text())
+      .then((result) => console.log(response.json()));
+      .catch((error) => console.log("error", error));
+  }
   const noImage =
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
   return (
@@ -55,6 +82,8 @@ export default function Writepost({ loggedUser }) {
                     id="name"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     placeholder="Give this post a title"
+                    value={title}
+                    onChange={(e)=>{setTitle(e.target.value)}}
                     required=""
                   />
                 </div>
@@ -71,12 +100,14 @@ export default function Writepost({ loggedUser }) {
                     id="price"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     placeholder="Write your thoughts in the post"
+                    value={content}
+                    onChange={(e)=>{setContent(e.target.value)}}
                     required=""
                   />
                 </div>
                 <Uploader />
               </div>
-              <button className="text-white inline-flex items-center justify-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+              <button onClick={publishPost()} className="text-white inline-flex items-center justify-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                 Publish Post
               </button>
             </div>
